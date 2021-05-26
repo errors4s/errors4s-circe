@@ -1,6 +1,6 @@
-# See what JREs jabba has for us.
+# Check that the generated documentation is up to date
 
-name: Jabba Info
+name: Generated Documentation Check
 
 on:
   pull_request:
@@ -12,11 +12,11 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  jabba-info:
-    name: Jabba Info
+  docs-check:
+    name: Generated Documentation Check
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest]
+        os: [ubuntu-latest]
         java: [adopt@1.16]
     runs-on: ${{ matrix.os }}
     steps:
@@ -30,4 +30,4 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
 
-      - run: jabba ls-remote
+      - run: sbt ';++3.0.0;docs/mdoc --check'

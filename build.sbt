@@ -1,18 +1,25 @@
-import ReleaseTransformations._
 import _root_.io.isomarcte.sbt.version.scheme.enforcer.core._
 import _root_.org.errors4s.sbt.GAVs._
 import _root_.org.errors4s.sbt._
 
 // Constants //
 
-lazy val org           = "org.errors4s"
+lazy val errors4sOrg   = "org.errors4s"
 lazy val jreVersion    = "16"
-lazy val projectName   = "errors4s"
-lazy val projectUrl    = url("https://github.com/errors4s/errors4s")
-lazy val scala212      = "2.12.13"
+lazy val projectName   = "errors4s-core-circe"
+lazy val projectUrl    = url(s"https://github.com/errors4s/${projectName}")
+lazy val scala212      = "2.12.14"
 lazy val scala213      = "2.13.6"
 lazy val scala30       = "3.0.0"
-lazy val scalaVersions = Set(scala212, scala213, scala30)
+lazy val scalaVersions = Set(scala212, scala213)
+
+// SBT Command Aliases //
+
+// Usually run before making a PR
+addCommandAlias(
+  "full_build",
+  s";+clean;githubWorkflowGenerate;+test;+test:doc;+versionSchemeEnforcerCheck;++${scala213};scalafmtAll;scalafmtSbt;scalafixAll;docs/mdoc"
+)
 
 // Functions //
 
@@ -29,11 +36,15 @@ def initialImports(packages: List[String], isScala3: Boolean): String = {
   packages.map(value => s"import ${value}.${wildcard}").mkString("\n")
 }
 
+// Dependency Overrides //
+
+ThisBuild / dependencyOverrides += G.scalametaG % A.semanticdbA % V.semanticdbV cross CrossVersion.full
+
 // Common Settings //
 
 ThisBuild / crossScalaVersions := scalaVersions.toSeq
 
-ThisBuild / organization := org
+ThisBuild / organization := errors4sOrg
 ThisBuild / scalaVersion := scala213
 ThisBuild / scalafixDependencies ++= List(G.organizeImportsG %% A.organizeImportsA % V.organizeImportsV)
 ThisBuild / scalafixScalaBinaryVersion := "2.13"
@@ -42,7 +53,7 @@ ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
 // Baseline version for repo split
 
-ThisBuild / versionSchemeEnforcerIntialVersion := Some("1.0.0.0")
+ThisBuild / versionSchemeEnforcerInitialVersion := Some("1.0.0.0")
 ThisBuild / versionScheme := Some("pvp")
 
 // GithubWorkflow
@@ -53,8 +64,11 @@ ThisBuild / githubWorkflowBuild := List(WorkflowStep.Sbt(List("versionSchemeEnfo
 
 // Doc Settings
 
+def scaladocLink(scalaBinaryVersion: String, version: String): String =
+  s"https://www.javadoc.io/doc/${errors4sOrg}/${projectName}_${scalaBinaryVersion}/${version}/index.html"
+
 lazy val docSettings: List[Def.Setting[_]] = List(
-  apiURL := Some(url(s"https://www.javadoc.io/doc/org/errors4s_${scalaBinaryVersion.value}/latest/index.html")),
+  apiURL := Some(url(scaladocLink(scalaBinaryVersion.value, version.value))),
   autoAPIMappings := true,
   Compile / doc / apiMappings := {
     if (isScala3(scalaBinaryVersion.value)) {
@@ -69,7 +83,7 @@ lazy val docSettings: List[Def.Setting[_]] = List(
       case Some((3, _)) =>
         List(
           s"-external-mappings:.*java.*::javadoc::https://docs.oracle.com/en/java/javase/${jreVersion}/docs/api/java.base/",
-          "-social-links:github::https://github.com/errors4s/errors4s"
+          s"-social-links:github::https://github.com/errors4s/${projectName}"
         )
       case Some((2, n)) =>
         List("-language:experimental.macros") ++
@@ -88,17 +102,23 @@ lazy val commonSettings: List[Def.Setting[_]] =
   List(
     scalaVersion := scala213,
     scalacOptions := {
-      scalacOptions.value ++
-        (if (isScala3(scalaBinaryVersion.value)) {
-           List("-source:3.0-migration") ++
-             (if (JREMajorVersion.majorVersion > 8) {
-                List("-release:8")
-              } else {
-                Nil
-              })
-         } else {
-           List("-target:jvm-1.8", "-Wconf:cat=unused-imports:info")
-         })
+      val currentOptions: Seq[String] = scalacOptions.value
+      (
+        if (isScala3(scalaBinaryVersion.value)) {
+          // Remove -source since as of 0.1.19 of sbt-tpolecat it sets -source
+          // to be `-source:future`, but we only want that on sources which are
+          // _strictly_ Scala 3, we want `-source:3.0-migration` from cross
+          // compiled sources.
+          currentOptions.filterNot(_.startsWith("-source")) ++ List("-source:3.0-migration") ++
+            (if (JREMajorVersion.majorVersion > 8) {
+               List("-release:8")
+             } else {
+               Nil
+             })
+        } else {
+          currentOptions ++ List("-target:jvm-1.8", "-Wconf:cat=unused-imports:info")
+        }
+      )
     },
     libraryDependencies ++= {
       if (isScala3(scalaBinaryVersion.value)) {
@@ -124,13 +144,13 @@ lazy val publishSettings = List(
     false
   },
   publishTo := {
-    val nexus = "https://oss.sonatype.org/"
+    val nexus = "https://s01.oss.sonatype.org/"
     if (isSnapshot.value)
       Some("snapshots" at nexus + "content/repositories/snapshots")
     else
       Some("releases" at nexus + "service/local/staging/deploy/maven2")
   },
-  scmInfo := Some(ScmInfo(projectUrl, "scm:git:git@github.com:errors4s/errors4s.git")),
+  scmInfo := Some(ScmInfo(projectUrl, s"scm:git:git@github.com:errors4s/${projectName}.git")),
   developers :=
     List(Developer("isomarcte", "David Strawn", "isomarcte@gmail.com", url("https://github.com/isomarcte"))),
   credentials += Credentials(Path.userHome / ".sbt" / ".credentials")
@@ -138,47 +158,63 @@ lazy val publishSettings = List(
 
 // Root //
 
-lazy val errors4s = (project in file("."))
+lazy val root = (project in file("."))
   .settings(commonSettings, publishSettings)
   .settings(
     List(
-      name := projectName,
+      name := s"${projectName}-root",
       Compile / packageBin / publishArtifact := false,
       Compile / packageSrc / publishArtifact := false
     )
   )
-  .aggregate(core)
+  .aggregate(circe)
   .disablePlugins(SbtVersionSchemeEnforcerPlugin)
 
-// Core //
+// Circe //
 
-lazy val core = project
+lazy val circe = project
   .settings(commonSettings, publishSettings)
   .settings(
-    name := s"${projectName}-core",
+    name := s"${projectName}",
     console / initialCommands :=
-      initialImports(List("org.errors4s.core", "org.errors4s.core.syntax.all"), isScala3(scalaBinaryVersion.value)),
-    libraryDependencies ++= {
-      if (isScala3(scalaBinaryVersion.value)) {
-        Nil
-      } else {
-        List(G.scalaLangG % A.scalaReflectA % scalaVersion.value % Provided)
-      }
-    },
-    libraryDependencies ++= List(G.scalametaG %% A.munitA % V.munitV % Test)
+      List("org.errors4s.core._", "org.errors4s.core.syntax.all._", "org.errors4s.core.circe.instances._")
+        .map(value => s"import $value")
+        .mkString("\n"),
+    libraryDependencies ++= List(G.circeG %% A.circeCoreA % V.circeV, errors4sOrg %% A.errors4sCoreA % V.errors4sCoreV),
+    libraryDependencies ++=
+      List(
+        G.circeG     %% A.circeTestingA           % V.circeV,
+        G.typelevelG %% A.disciplineMunitA        % V.disciplineMunitV,
+        errors4sOrg  %% A.errors4sCoreCatsA       % V.errors4sCoreCatsV,
+        errors4sOrg  %% A.errors4sCoreScalacheckA % V.errors4sCoreScalacheckV
+      ).map(_ % Test)
   )
 
 // Docs //
 
-lazy val docs = (project.in(file("errors4s-core-docs")))
+lazy val docs = (project.in(file(s"${projectName}-docs")))
+  .settings(commonSettings)
   .settings(
-    mdocVariables :=
+    name := s"${projectName}-docs",
+    mdocVariables := {
+      val latestRelease: String =
+        if (isSnapshot.value) {
+          versionSchemeEnforcerPreviousVersion.value.getOrElse("latest")
+        } else {
+          version.value
+        }
+      val scalaBinVer: String = scalaBinaryVersion.value
+
       Map(
-        "LATEST_RELEASE" -> versionSchemeEnforcerPreviousVersion.value.getOrElse("latest"),
-        "SCALA_VERSION"  -> "2.13"
-      ),
+        "LATEST_RELEASE"       -> latestRelease,
+        "SCALA_BINARY_VERSION" -> scalaBinVer,
+        "SCALADOC_LINK"        -> scaladocLink(scalaBinVer, latestRelease),
+        "ORG"                  -> errors4sOrg,
+        "PROJECT_NAME"         -> projectName
+      )
+    },
     mdocIn := file("docs-src"),
     mdocOut := file("docs")
   )
-  .dependsOn(core)
+  .dependsOn(circe)
   .enablePlugins(MdocPlugin)
