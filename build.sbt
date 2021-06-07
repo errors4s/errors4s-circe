@@ -18,7 +18,7 @@ lazy val scalaVersions = Set(scala212, scala213)
 // Usually run before making a PR
 addCommandAlias(
   "full_build",
-  s";+clean;githubWorkflowGenerate;+test;+test:doc;+versionSchemeEnforcerCheck;++${scala213};scalafmtAll;scalafmtSbt;scalafixAll;docs/mdoc"
+  s";+clean;githubWorkflowGenerate;docs/mdoc;+test;+test:doc;+versionSchemeEnforcerCheck;++${scala213};scalafmtAll;scalafmtSbt;scalafixAll"
 )
 
 // Functions //
