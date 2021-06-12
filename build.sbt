@@ -11,7 +11,7 @@ lazy val projectUrl    = url(s"https://github.com/errors4s/${projectName}")
 lazy val scala212      = "2.12.14"
 lazy val scala213      = "2.13.6"
 lazy val scala30       = "3.0.0"
-lazy val scalaVersions = Set(scala212, scala213)
+lazy val scalaVersions = Set(scala212, scala213, scala30)
 
 // SBT Command Aliases //
 
