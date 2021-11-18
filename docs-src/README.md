@@ -42,10 +42,12 @@ This project uses [Package Versioning Policy (PVP)][pvp]. This is to allow long 
 
 If you need support for a version combination which is not listed here, please open an issue and we will endeavor to add support for it if possible.
 
-|Version|Errors4s Core|Circe Version|Scala 2.11|Scala 2.12|Scala 2.13|Scala 3.0|Supported       |
-|-------|:-----------:|:-----------:|:--------:|:--------:|:--------:|:-------:|:--------------:|
-|2.0.x.x|1.0.x.x      |0.14.x       |No        |Yes       |Yes       |Yes      |Not Yet Released|
-|1.0.x.x|1.0.x.x      |0.13.x       |No        |Yes       |Yes       |No       |Yes             |
+|Version|Errors4s Core|Circe Version|Scala 2.11|Scala 2.12|Scala 2.13|Scala 3.0|Scala 3.1|Supported       |
+|-------|:-----------:|:-----------:|:--------:|:--------:|:--------:|:-------:|:-------:|:--------------:|
+|2.0.x.x|1.0.x.x      |0.14.x       |No        |Yes       |Yes       |No       |Yes      |Not Yet Released|
+|1.0.x.x|1.0.x.x      |0.13.x       |No        |Yes       |Yes       |No       |No       |Yes             |
+
+Note, as of 2021-11-18, the Scala 3.x target is Scala 3.1, which is binary incompatible with Scala 3.0.
 
 [pvp]: https://pvp.haskell.org/ "PVP"
 [errors4s-core-pvp]: https://github.com/errors4s/errors4s-core#versioning "Errors4s Core: Versioning"
