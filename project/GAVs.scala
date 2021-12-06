@@ -30,12 +30,12 @@ object GAVs {
     lazy val betterMonadicForV: String       = "0.3.1"
     lazy val circeV: String                  = "0.13.0"
     lazy val disciplineMunitV: String        = "1.0.9"
-    lazy val errors4sCoreCatsV: String       = "1.0.0.0-RC1"
-    lazy val errors4sCoreScalacheckV: String = "1.0.0.0-RC1"
-    lazy val errors4sCoreV: String           = "1.0.0.0-RC1"
-    lazy val kindProjectorV: String          = "0.13.0"
+    lazy val errors4sCoreCatsV: String       = "1.0.0.0-RC2"
+    lazy val errors4sCoreScalacheckV: String = "1.0.0.0-RC2"
+    lazy val errors4sCoreV: String           = "1.0.0.0-RC2"
+    lazy val kindProjectorV: String          = "0.13.2"
     lazy val munitV: String                  = "0.7.26"
     lazy val organizeImportsV: String        = "0.4.4"
-    lazy val semanticdbV: String             = "4.4.20"
+    lazy val semanticdbV: String             = "4.4.30"
   }
 }
