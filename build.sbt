@@ -58,7 +58,8 @@ ThisBuild / versionScheme := Some("pvp")
 // GithubWorkflow
 ThisBuild / githubWorkflowPublishTargetBranches := Nil
 ThisBuild / githubWorkflowOSes := Set("macos-latest", "ubuntu-latest").toList
-ThisBuild / githubWorkflowJavaVersions := Set("openjdk@1.17.0", "openjdk@1.16.0", "adopt@1.8").toList
+ThisBuild / githubWorkflowJavaVersions :=
+  Set("17", "11", "8").map(version => JavaSpec(JavaSpec.Distribution.Temurin, version)).toList
 ThisBuild / githubWorkflowBuild := List(WorkflowStep.Sbt(List("versionSchemeEnforcerCheck", "Test / doc")))
 
 // Doc Settings
