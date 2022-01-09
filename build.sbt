@@ -10,7 +10,8 @@ lazy val projectName   = "errors4s-core-circe"
 lazy val projectUrl    = url(s"https://github.com/errors4s/${projectName}")
 lazy val scala212      = "2.12.15"
 lazy val scala213      = "2.13.7"
-lazy val scalaVersions = Set(scala212, scala213)
+lazy val scala30       = "3.0.2"
+lazy val scalaVersions = Set(scala212, scala213, scala30)
 
 // SBT Command Aliases //
 
@@ -52,7 +53,7 @@ ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
 // Baseline version for repo split
 
-ThisBuild / versionSchemeEnforcerInitialVersion := Some("1.0.0.0")
+ThisBuild / versionSchemeEnforcerInitialVersion := Some("2.0.0.0")
 ThisBuild / versionScheme := Some("pvp")
 
 // GithubWorkflow
@@ -200,7 +201,7 @@ lazy val docs = (project.in(file(s"${projectName}-docs")))
       val latestRelease: String =
         // Need to wait for sbt-version-scheme-enforcer 2.1.2.0 for this to
         // work dynamically.
-        "1.0.0.0-RC0"
+        "2.0.0.0-SNAPSHOT"
       val scalaBinVer: String = scalaBinaryVersion.value
 
       Map(
