@@ -201,7 +201,7 @@ lazy val docs = (project.in(file(s"${projectName}-docs")))
       val latestRelease: String =
         // Need to wait for sbt-version-scheme-enforcer 2.1.2.0 for this to
         // work dynamically.
-        "2.0.0.0-SNAPSHOT"
+        "2.0.0.0"
       val scalaBinVer: String = scalaBinaryVersion.value
 
       Map(

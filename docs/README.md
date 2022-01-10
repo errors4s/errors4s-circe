@@ -4,7 +4,7 @@
 
 [The Scaladoc for errors4s-core-circe may be viewed here][javadoc].
 
-[javadoc]: https://www.javadoc.io/doc/org.errors4s/errors4s-core-circe_2.13/2.0.0.0-SNAPSHOT/index.html "Scaladoc"
+[javadoc]: https://www.javadoc.io/doc/org.errors4s/errors4s-core-circe_2.13/2.0.0.0/index.html "Scaladoc"
 
 # Overview #
 
@@ -18,7 +18,7 @@ This project provides [circe][circe] typeclass instances for [errors4s-core][err
 Add this to your `libraryDependencies` in your `build.sbt`.
 
 ```scala
-    "org.errors4s" %% "errors4s-core-circe" % "2.0.0.0-SNAPSHOT"
+    "org.errors4s" %% "errors4s-core-circe" % "2.0.0.0"
 ```
 
 ```scala
