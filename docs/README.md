@@ -4,7 +4,7 @@
 
 [The Scaladoc for errors4s-core-circe may be viewed here][javadoc].
 
-[javadoc]: https://www.javadoc.io/doc/org.errors4s/errors4s-core-circe_2.13/1.0.0.0-RC0/index.html "Scaladoc"
+[javadoc]: https://www.javadoc.io/doc/org.errors4s/errors4s-core-circe_2.13/1.0.0.0/index.html "Scaladoc"
 
 # Overview #
 
@@ -18,7 +18,7 @@ This project provides [circe][circe] typeclass instances for [errors4s-core][err
 Add this to your `libraryDependencies` in your `build.sbt`.
 
 ```scala
-    "org.errors4s" %% "errors4s-core-circe" % "1.0.0.0-RC0"
+    "org.errors4s" %% "errors4s-core-circe" % "1.0.0.0"
 ```
 
 ```scala
@@ -48,10 +48,8 @@ If you need support for a version combination which is not listed here, please o
 
 |Version|Errors4s Core|Circe Version|Scala 2.11|Scala 2.12|Scala 2.13|Scala 3.0|Scala 3.1|Supported       |
 |-------|:-----------:|:-----------:|:--------:|:--------:|:--------:|:-------:|:-------:|:--------------:|
-|2.0.x.x|1.0.x.x      |0.14.x       |No        |Yes       |Yes       |No       |Yes      |Not Yet Released|
+|2.0.x.x|1.0.x.x      |0.14.x       |No        |Yes       |Yes       |Yes      |Yes      |Yes             |
 |1.0.x.x|1.0.x.x      |0.13.x       |No        |Yes       |Yes       |No       |No       |Yes             |
-
-Note, as of 2021-11-18, the Scala 3.x target is Scala 3.1, which is binary incompatible with Scala 3.0.
 
 [pvp]: https://pvp.haskell.org/ "PVP"
 [errors4s-core-pvp]: https://github.com/errors4s/errors4s-core#versioning "Errors4s Core: Versioning"
